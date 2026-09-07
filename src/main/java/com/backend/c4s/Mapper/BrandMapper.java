@@ -13,7 +13,6 @@ public class BrandMapper {
 
         return Brand.builder()
                 .name(request.getName())
-                .logoUrl(request.getLogoUrl())
                 .build();
     }
 
@@ -31,6 +30,5 @@ public class BrandMapper {
         if (request==null || brand==null) return;
 
         brand.setName(request.getName());
-        brand.setLogoUrl(request.getLogoUrl());
     }
 }

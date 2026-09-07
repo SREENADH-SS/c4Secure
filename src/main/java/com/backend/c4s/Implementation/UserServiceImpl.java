@@ -1,9 +1,6 @@
 package com.backend.c4s.Implementation;
 
-import com.backend.c4s.Dto.User.AdminUserResponse;
-import com.backend.c4s.Dto.User.ChangePasswordRequest;
-import com.backend.c4s.Dto.User.UserRequest;
-import com.backend.c4s.Dto.User.UserResponse;
+import com.backend.c4s.Dto.User.*;
 import com.backend.c4s.Entity.Users;
 import com.backend.c4s.Entity.common.Role;
 import com.backend.c4s.Exception.DuplicateResourceException;
@@ -83,7 +80,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponse updateUser(Long id, UserRequest request) {
+    public UserResponse updateUser(Long id, UpdateUserRequest request) {
         Users existingUser = userRepository.findById(id)
                 .orElseThrow(()-> new ResourceNotFoundException("Users", "id", id));
 
@@ -91,12 +88,10 @@ public class UserServiceImpl implements UserService {
         existingUser.setLastName(request.getLastName()!=null ? request.getLastName().trim(): null);
         existingUser.setPhone((request.getPhone()!=null ? request.getPhone().trim(): null));
         existingUser.setCity(request.getCity());
+        existingUser.setAddress(request.getAddress());
         existingUser.setState(request.getState());
         existingUser.setPostalCode(request.getPostalCode());
 
-        if(request.getPassWord()!=null && !request.getPassWord().isBlank()){
-            existingUser.setPassword(passwordEncoder.encode(request.getPassWord()));
-        }
         Users updatedUser = userRepository.save(existingUser);
         return userMapper.toResponse(updatedUser);
     }

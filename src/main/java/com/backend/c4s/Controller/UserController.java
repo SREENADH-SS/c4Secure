@@ -1,9 +1,6 @@
 package com.backend.c4s.Controller;
 
-import com.backend.c4s.Dto.User.AdminUserResponse;
-import com.backend.c4s.Dto.User.ChangePasswordRequest;
-import com.backend.c4s.Dto.User.UserRequest;
-import com.backend.c4s.Dto.User.UserResponse;
+import com.backend.c4s.Dto.User.*;
 import com.backend.c4s.Service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -64,7 +61,7 @@ public class UserController {
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @Operation(summary = "Update user details")
-    public ResponseEntity<UserResponse> updateUser(@PathVariable Long id, @Valid @RequestBody UserRequest request){
+    public ResponseEntity<UserResponse> updateUser(@PathVariable Long id, @Valid @RequestBody UpdateUserRequest request){
         return ResponseEntity.ok(userService.updateUser(id, request));
     }
 

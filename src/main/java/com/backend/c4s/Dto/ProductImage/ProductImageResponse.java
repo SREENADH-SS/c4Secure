@@ -17,8 +17,10 @@ public class  ProductImageResponse {
     private Long id;
     private Long productId;
     private String fileName;
+    private String publicId;
     private String imageUrl;
     private String fileType;
+    private boolean isPrimary;
     private Long size;
     private LocalDateTime uploadedAt;
 

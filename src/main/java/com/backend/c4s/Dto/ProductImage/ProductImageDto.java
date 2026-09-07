@@ -14,4 +14,6 @@ public class ProductImageDto {
 
     private Long id;
     private String publicId;
+    private String imageUrl;
+    private boolean isPrimary;
 }

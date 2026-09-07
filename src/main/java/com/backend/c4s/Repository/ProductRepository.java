@@ -32,4 +32,7 @@ public interface ProductRepository extends JpaRepository<Products, Long>, JpaSpe
             @Param("maxPrice") BigDecimal maxPrice,
             Pageable pageable
     );
+    boolean existsByName(String name);
+
+    boolean existsByNameAndIdNot(String name, Long id);
 }

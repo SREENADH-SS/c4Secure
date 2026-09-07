@@ -29,6 +29,8 @@ public class ProductController {
 
     private final ProductService productService;
 
+    @GetMapping
+    @Operation(summary = "Get filtered products (Public)")
     public ResponseEntity<Page<ProductResponse>> getFilteredProducts(
             @RequestParam(value = "brandIds", required = false)List<Long> brandIds,
             @RequestParam(value = "categoryIds", required = false)List<Long> categoryIds,
@@ -65,7 +67,7 @@ public class ProductController {
             @Valid @RequestPart("product") ProductRequest request,
             @RequestPart(value = "newImages", required = false)List<MultipartFile>newImages,
             @RequestParam(value = "deleteImageIds", required = false)List<Long> deleteImageIds,
-            @RequestParam(value = "newPrimaryIImageId", required = false)Long newPrimaryImageId
+            @RequestParam(value = "newPrimaryImageId", required = false)Long newPrimaryImageId
     ){
         return ResponseEntity.ok(productService.updateProductWithImage(id, request, newImages, deleteImageIds,newPrimaryImageId ));
     }

@@ -120,6 +120,8 @@ public class ProductMapper {
                 .map(img -> ProductImageDto.builder()
                 .id(img.getId())
                 .publicId(img.getPublicId())
+                        .imageUrl(img.getImageUrl()) // Added imageUrl
+                        .isPrimary(img.isPrimary())
                 .build())
                 .collect(Collectors.toList());
     }
@@ -135,7 +137,7 @@ public class ProductMapper {
         return BrandResponse.builder()
                 .id(brand.getId())
                 .name(brand.getName())
-                // Map any other fields present in your BrandResponse DTO (e.g., brand.getLogoUrl())
+                .logoUrl(brand.getLogoUrl())
                 .build();
     }
 }

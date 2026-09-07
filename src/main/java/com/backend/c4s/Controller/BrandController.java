@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -34,24 +35,24 @@ public class BrandController {
         return ResponseEntity.ok(brandService.getBrandById(id));
     }
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Create a new brand (Admin only)")
-    public ResponseEntity<BrandResponse> createBrand(@Valid @RequestBody BrandRequest request){
+    public ResponseEntity<BrandResponse> createBrand(@Valid @ModelAttribute BrandRequest request){
         return new ResponseEntity<>(brandService.createBrand(request), HttpStatus.CREATED);
     }
 
-    @PostMapping("/{id}")
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Update an existing brand (Admin only)")
-    public ResponseEntity<BrandResponse>updateBrand(@PathVariable Long id, @Valid @RequestBody BrandRequest request ){
+    public ResponseEntity<BrandResponse>updateBrand(@PathVariable Long id, @Valid @ModelAttribute BrandRequest request ){
         return ResponseEntity.ok(brandService.updateBrand(id, request));
     }
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Delete brand by ID (Admin only)")
-    public ResponseEntity<BrandResponse>deleteBrand(@PathVariable Long id){
+    public ResponseEntity<Void>deleteBrand(@PathVariable Long id){
         brandService.deleteBrand(id);
         return ResponseEntity.noContent().build();
     }

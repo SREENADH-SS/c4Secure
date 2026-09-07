@@ -3,6 +3,8 @@ package com.backend.c4s.Implementation;
 import com.backend.c4s.Dto.Product.AdminProductResponse;
 import com.backend.c4s.Dto.Product.ProductRequest;
 import com.backend.c4s.Dto.Product.ProductResponse;
+import com.backend.c4s.Entity.Brand;
+import com.backend.c4s.Entity.Category;
 import com.backend.c4s.Entity.ProductImage;
 import com.backend.c4s.Entity.Products;
 import com.backend.c4s.Entity.common.ProductStatus;
@@ -25,9 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -44,17 +44,33 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public ProductResponse createProductWithImage(ProductRequest request, List<MultipartFile> imageFiles, Integer primaryImageIndex) {
+
+        if (productRepository.existsByName(request.getName())) {
+            throw new BadRequestException("A product with this name already exists: " + request.getName());
+        }
+
         Products product = new Products();
         productMapper.mapRequestToEntity(request, product);
 
         if (request.getProductStatus() == null) {
             product.setProductStatus(ProductStatus.AVAILABLE);
         }
+
+        Brand brand = brandRepository.findById(request.getBrandId())
+                .orElseThrow(() -> new ResourceNotFoundException("Brand", "id", request.getBrandId()));
+        product.setBrand(brand);
+
+        if (request.getCategoryId() != null && !request.getCategoryId().isEmpty()) {
+            List<Category> categories = categoryRepository.findAllById(request.getCategoryId());
+            product.setCategories(new HashSet<>(categories));
+        }
+
         Products savedProduct = productRepository.save(product);
 
         if (imageFiles != null && !imageFiles.isEmpty()) {
             uploadAndSaveImages(savedProduct, imageFiles, primaryImageIndex);
         }
+
         return productMapper.toProductResponse(savedProduct);
     }
 
@@ -68,19 +84,32 @@ public class ProductServiceImpl implements ProductService {
         Products existingProduct = productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("ProductId", "id", id));
 
+        if (request.getName() != null &&
+                productRepository.existsByNameAndIdNot(request.getName(), id)) {
+            throw new BadRequestException("A product with this name already exists: " + request.getName());
+        }
+
         productMapper.mapRequestToEntity(request, existingProduct);
 
-        if (deleteImageIds != null && !deleteImageIds.isEmpty()) {
-            for (Long imageId : deleteImageIds) {
-                ProductImage image = productImageRepository.findById(id)
-                        .orElseThrow(() -> new ResourceNotFoundException("ProductImage", "id", id));
+        if (request.getBrandId() != null) {
+            Brand brand = brandRepository.findById(request.getBrandId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Brand", "id", request.getBrandId()));
+            existingProduct.setBrand(brand);
+        }
 
-                try {
-                    cloudinaryService.deleteFile(image.getPublicId());
-                    existingProduct.getImages().remove(image);
-                    productImageRepository.delete(image);
-                } catch (IOException e) {
-                    throw new BadRequestException("Failed to remove image from Cloudinary: " + e.getMessage());
+        if (deleteImageIds != null && !deleteImageIds.isEmpty() && existingProduct.getImages() != null) {
+            Iterator<ProductImage> iterator = existingProduct.getImages().iterator();
+            while (iterator.hasNext()) {
+                ProductImage image = iterator.next();
+                if (deleteImageIds.contains(image.getId())) {
+                    try {
+                        cloudinaryService.deleteFile(image.getPublicId());
+                    } catch (IOException e) {
+                        throw new BadRequestException("Failed to remove image from Cloudinary: " + e.getMessage());
+                    }
+                    iterator.remove(); // Safely remove from Set
+                    productImageRepository.delete(image); // Delete from DB
+
                 }
             }
         }
@@ -123,8 +152,8 @@ public class ProductServiceImpl implements ProductService {
 
         return productRepository.filterProducts(
                 ProductStatus.AVAILABLE,
-                (brandIds !=null && brandIds.isEmpty())? null: brandIds,
-                (categoryIds !=null && categoryIds.isEmpty()) ? null: categoryIds,
+                (brandIds !=null && !brandIds.isEmpty())?  brandIds: null,
+                (categoryIds !=null && !categoryIds.isEmpty()) ? categoryIds: null,
                 minPrice,
                 maxPrice,
                 pageable

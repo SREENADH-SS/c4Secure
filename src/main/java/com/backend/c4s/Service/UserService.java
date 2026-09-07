@@ -1,9 +1,6 @@
 package com.backend.c4s.Service;
 
-import com.backend.c4s.Dto.User.AdminUserResponse;
-import com.backend.c4s.Dto.User.ChangePasswordRequest;
-import com.backend.c4s.Dto.User.UserRequest;
-import com.backend.c4s.Dto.User.UserResponse;
+import com.backend.c4s.Dto.User.*;
 
 import java.util.List;
 
@@ -21,7 +18,7 @@ public interface UserService {
 
     List<AdminUserResponse>etAllUsersForAdmin();
 
-    UserResponse updateUser(Long id, UserRequest request);
+    UserResponse updateUser(Long id, UpdateUserRequest request);
 
     void changePassword(Long id, ChangePasswordRequest request);
 

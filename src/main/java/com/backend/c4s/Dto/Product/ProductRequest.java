@@ -26,6 +26,7 @@ public class ProductRequest {
 
 
     @NotNull(message = "Description Must Be Required")
+    @Size(max = 1000, message = "Description must not exceed 1000 characters")
     private String description;
 
     @NotNull(message = "Price is required")
@@ -44,10 +45,10 @@ public class ProductRequest {
     @NotNull(message = "Product Brand Must Be Required")
     private Long brandId;
 
-    @NotEmpty(message = "At Least One Stock Quantity is Required")
+    @NotEmpty(message = "At least one category is required")
     private Set<Long>categoryId;
 
-    private List<String> imageUrls;
+    private List<MultipartFile> images;
 
 
 }
