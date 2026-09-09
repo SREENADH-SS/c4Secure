@@ -44,6 +44,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String userEmail;
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            System.out.println("### No Authorization header or missing Bearer prefix for: " + request.getRequestURI());
             filterChain.doFilter(request, response);
             return;
         }
@@ -51,11 +52,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         jwt = authHeader.substring(7);
         try {
             userEmail = jwtService.extractUsername(jwt);
+            System.out.println("### JWT userEmail extracted: " + userEmail);
 
             if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
+                System.out.println("### UserDetails username: " + userDetails.getUsername());
 
-                if (jwtService.isTokenValid(jwt, userDetails)) {
+                boolean valid = jwtService.isTokenValid(jwt, userDetails);
+                System.out.println("### isTokenValid: " + valid);
+
+                if (valid) {
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                             userDetails,
                             null,
@@ -63,11 +69,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     );
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
+                    System.out.println("### Authentication set successfully");
                 }
             }
         } catch (Exception e) {
-            // Failed authentication will be caught downstream by JwtAuthenticationEntryPoint
-            logger.error("Cannot set user authentication: {}", e);
+            System.out.println("### EXCEPTION in JWT filter: " + e.getClass().getName() + " - " + e.getMessage());
             SecurityContextHolder.clearContext();
         }
 

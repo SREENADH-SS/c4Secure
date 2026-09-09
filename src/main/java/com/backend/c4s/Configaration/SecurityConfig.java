@@ -1,6 +1,7 @@
 package com.backend.c4s.Configaration;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -26,6 +27,7 @@ public class SecurityConfig {
     private final CorsConfigurationSource corsConfigurationSource;
 
     private static final String[] PUBLIC_URLS = {
+            "/error",
             "/api/v1/auth",
             "/api/v1/auth/**",
             "/v3/api-docs",
@@ -34,6 +36,13 @@ public class SecurityConfig {
             "/swagger-ui/**",
             "/swagger-ui.html"
     };
+
+    @Bean
+    public FilterRegistrationBean<JwtAuthenticationFilter> jwtFilterRegistration(JwtAuthenticationFilter filter) {
+        FilterRegistrationBean<JwtAuthenticationFilter> registrationBean = new FilterRegistrationBean<>(filter);
+        registrationBean.setEnabled(false); // keep it ONLY inside the Spring Security chain via addFilterBefore
+        return registrationBean;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -64,6 +73,7 @@ public class SecurityConfig {
                         // 4. Role-restricted routes
                         .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/v1/users/**").hasAnyRole("USER", "ADMIN")
+                        .requestMatchers("/api/v1/cart/**").hasAnyRole("USER", "ADMIN")
 
                         // 5. Secure remaining endpoints
                         .anyRequest().authenticated()

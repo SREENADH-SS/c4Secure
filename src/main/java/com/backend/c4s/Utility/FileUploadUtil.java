@@ -8,7 +8,7 @@ import java.util.List;
 public class FileUploadUtil {
 
     private static final List<String> ALLOWED_IMAGE_EXTENSIONS = List.of("jpg", "jpeg", "png", "webp");
-    private static final long MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB in bytes
+    private static final long MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB in bytes
 
     private FileUploadUtil() {}
 

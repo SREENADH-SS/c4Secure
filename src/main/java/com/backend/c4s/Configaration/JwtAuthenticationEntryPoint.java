@@ -27,6 +27,9 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
             AuthenticationException authException
     ) throws IOException, ServletException {
 
+        System.err.println("### EntryPoint triggered on path [" + request.getServletPath() + "] due to: " + authException.getMessage());
+        authException.printStackTrace();
+
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
