@@ -1,8 +1,8 @@
 package com.backend.c4s.Dto.Installation;
 
 import com.backend.c4s.Entity.common.ScheduledStatus;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.FutureOrPresent;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,16 +18,17 @@ import java.time.LocalDateTime;
 
 public class InstallationScheduleRequest {
     @NotNull(message = "Purchase ID is required")
-    private Long purchaseId;
+    private String purchaseId;
 
-    @NotNull(message = "User ID is required")
+
     private Long userId;
 
     @NotNull(message = "Scheduled date is required")
     @FutureOrPresent(message = "Scheduled date must be in the present or future")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime scheduledDate;
 
-    @NotBlank(message = "Address is required")
+
     private String address;
 
     private String notes;

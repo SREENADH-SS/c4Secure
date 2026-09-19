@@ -26,7 +26,6 @@ public class PurchaseAdminResponse {
     private BigDecimal totalAmount;
     private PurchaseStatus status;
     private String shippingAddress;
-    private String paymentTransactionId;
     private LocalDateTime purchaseDate;
     private List<PurchaseItemResponse> items;
 

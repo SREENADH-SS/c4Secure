@@ -47,6 +47,10 @@ public class WishListMapper {
             return null;
         }
         ProductImage firstImage = images.get(0);
-        return firstImage != null ? firstImage.getImageUrl() : null;
+        return images.stream()
+                .filter(img -> img != null && img.isPrimary())
+                .map(ProductImage::getImageUrl)
+                .findFirst()
+                .orElseGet(() -> images.get(0) != null ? images.get(0).getImageUrl() : null);
     }
 }

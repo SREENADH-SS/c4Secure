@@ -26,6 +26,7 @@ public class InstallationScheduleMapper {
                 .userEmail(installationSchedule.getUser() != null ? installationSchedule.getUser().getEmail() : null)
                 .scheduledDate(installationSchedule.getScheduledDate())
                 .address(installationSchedule.getAddress())
+                .completedDate(installationSchedule.getCompletedDate())
                 .notes(installationSchedule.getNotes())
                 .status(installationSchedule.getStatus())
                 .build();

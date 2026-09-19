@@ -42,7 +42,7 @@ public class PurchaseMapper {
         if (purchase.getUser()!=null){
             String firstName=purchase.getUser().getFirstName()!=null ? purchase.getUser().getFirstName():"";
             String lastName=purchase.getUser().getLastName()!=null ? purchase.getUser().getLastName():"";
-            fullName=firstName+" "+lastName.trim();
+            fullName=String.join(" ", firstName, lastName).trim();
         }
 
         return PurchaseAdminResponse.builder()

@@ -1,11 +1,11 @@
 package com.backend.c4s.Implementation;
 
 import com.backend.c4s.Dto.Cart.AddToCartRequest;
-import com.backend.c4s.Dto.WishList.WishListRequest;
 import com.backend.c4s.Dto.WishList.WishListResponse;
 import com.backend.c4s.Entity.Products;
 import com.backend.c4s.Entity.Users;
 import com.backend.c4s.Entity.WishList;
+import com.backend.c4s.Exception.BadRequestException;
 import com.backend.c4s.Exception.ResourceNotFoundException;
 import com.backend.c4s.Mapper.WishListMapper;
 import com.backend.c4s.Repository.ProductRepository;
@@ -39,10 +39,10 @@ public class WishListServiceImpl implements WishListService {
     }
 
     @Override
-    public WishListResponse addProductToWishList(WishListRequest request) {
-        WishList wishList= getOrCreateWishListEntity(request.getUserId());
-        Products product= productRepository.findById(request.getProductId())
-                .orElseThrow(()->new ResourceNotFoundException("product", "id", request.getProductId()));
+    public WishListResponse addProductToWishList(Long userId, Long productId) {
+        WishList wishList= getOrCreateWishListEntity(userId);
+        Products product= productRepository.findById(productId)
+                .orElseThrow(()->new ResourceNotFoundException("product", "id", productId));
 
         wishList.getProduct().add(product);
         WishList savedWishList= wishListRepository.save(wishList);
@@ -69,7 +69,7 @@ public class WishListServiceImpl implements WishListService {
     }
 
     @Override
-    public void addProductToCartFromWishList(Long userId, Long productId, Integer quantity) {
+    public WishListResponse addProductToCartFromWishList(Long userId, Long productId, Integer quantity) {
 
         WishList wishList= getWishListEntity(userId);
 
@@ -87,16 +87,22 @@ public class WishListServiceImpl implements WishListService {
 
         cartService.addToCart(userId,cartRequest);
 
+        wishList.getProduct().remove(product);
+
+        WishList udatedWishList= wishListRepository.save(wishList);
+
+        return wishListMapper.toWishListResponse(udatedWishList);
+
     }
 
     @Override
-    public void moveAllWishListToCart(Long userId) {
+    public WishListResponse moveAllWishListToCart(Long userId) {
 
         WishList wishList= getWishListEntity(userId);
         Set<Products> products = new HashSet<>(wishList.getProduct());
 
         if (products.isEmpty()){
-            throw  new RuntimeException("Wishlist is empty");
+            throw  new BadRequestException("Wishlist is empty");
         }
 
         for (Products product : products){
@@ -109,7 +115,9 @@ public class WishListServiceImpl implements WishListService {
         }
 
         wishList.getProduct().clear();
-        wishListRepository.save(wishList);
+        WishList udatedWishList=wishListRepository.save(wishList);
+
+        return wishListMapper.toWishListResponse(udatedWishList);
 
     }
 

@@ -31,7 +31,7 @@ public class Purchase {
     private BigDecimal totalAmount;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "status", length = 32)
     private PurchaseStatus status;
 
     private String shippingAddress;

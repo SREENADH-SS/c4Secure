@@ -21,6 +21,7 @@ public class InstallationScheduleResponse {
     private String userName;
     private String userEmail;
     private LocalDateTime scheduledDate;
+    private LocalDateTime completedDate;
     private String address;
     private String notes;
     private ScheduledStatus status;
