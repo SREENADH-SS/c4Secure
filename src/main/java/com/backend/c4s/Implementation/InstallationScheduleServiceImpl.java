@@ -13,6 +13,7 @@ import com.backend.c4s.Repository.InstallationScheduleRepository;
 import com.backend.c4s.Repository.PurchaseRepository;
 import com.backend.c4s.Repository.UserRepository;
 import com.backend.c4s.Service.InstallationScheduleService;
+import com.backend.c4s.Service.SlotValidationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +30,7 @@ public class InstallationScheduleServiceImpl implements InstallationScheduleServ
     private final PurchaseRepository purchaseRepository;
     private final UserRepository userRepository;
     private final InstallationScheduleMapper mapper;
+    private final SlotValidationService slotValidationService;
 
     @Override
     public InstallationScheduleResponse scheduleInstallation(Long userId, InstallationScheduleRequest request) {
@@ -51,16 +53,13 @@ public class InstallationScheduleServiceImpl implements InstallationScheduleServ
 
         LocalDateTime requestedDate = request.getScheduledDate();
 
-        if (!requestedDate.isAfter(LocalDateTime.now())) {
-            throw new IllegalStateException(
-                    "Installation must be scheduled for a future date"
-            );
+        if (requestedDate == null || !requestedDate.isAfter(LocalDateTime.now())) {
+            throw new IllegalStateException("Installation must be scheduled for a future date");
         }
 
-        if (scheduleRepository.existsByScheduledDate(requestedDate)) {
-            throw new IllegalStateException(
-                    "This installation date is already booked. Please select another date."
-            );
+        // Cross-domain slot validation check (checks both Installation and Maintenance tables)
+        if (!slotValidationService.isSlotAvailable(requestedDate)) {
+            throw new IllegalStateException("This time slot is already booked for installation or maintenance.");
         }
 
         Users user= userRepository.findById(userId)
@@ -75,7 +74,7 @@ public class InstallationScheduleServiceImpl implements InstallationScheduleServ
                 .purchase(purchase)
                 .user(user)
                 .address(shippingAddress)
-                .scheduledDate(request.getScheduledDate())
+                .scheduledDate(requestedDate)
                 .notes(request.getNotes())
                 .status(ScheduledStatus.SCHEDULED)
                 .build();
@@ -178,19 +177,16 @@ public class InstallationScheduleServiceImpl implements InstallationScheduleServ
 
         LocalDateTime requestedDate = request.getScheduledDate();
 
-        if (!requestedDate.isAfter(LocalDateTime.now())) {
-            throw new IllegalStateException(
-                    "Installation must be scheduled for a future date"
-            );
+        if (requestedDate == null || !requestedDate.isAfter(LocalDateTime.now())) {
+            throw new IllegalStateException("Installation must be scheduled for a future date");
         }
 
-        if (scheduleRepository.existsByScheduledDate(requestedDate)) {
-            throw new IllegalStateException(
-                    "This installation date is already booked. Please select another date."
-            );
+        // Cross-domain slot validation check
+        if (!slotValidationService.isSlotAvailable(requestedDate)) {
+            throw new IllegalStateException("This time slot is already booked. Please select another date.");
         }
 
-        schedule.setScheduledDate(request.getScheduledDate());
+        schedule.setScheduledDate(requestedDate);
 
         if(request.getAddress()!= null && !request.getAddress().isBlank()){
             schedule.setAddress(request.getAddress());

@@ -14,5 +14,7 @@ public interface PurchaseRepository extends JpaRepository<Purchase, String> {
 
     List<Purchase>findByStatus(PurchaseStatus status);
 
+    boolean existsByUserIdAndStatus(Long userId, PurchaseStatus status);
+
     boolean existsByPurchaseIdAndUserId(String purchaseId, Long userId);
 }

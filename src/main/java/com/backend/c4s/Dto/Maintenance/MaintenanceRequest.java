@@ -6,6 +6,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -23,27 +24,15 @@ import java.time.LocalDateTime;
 
 public class MaintenanceRequest {
 
-    @NotNull(message = "User ID is required")
-    private Long userId;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private Users user;
-
-    private Long productId;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id", nullable = false)
-    private Products product;
-
     @NotBlank(message = "Issue title is required")
     private String issueTitle;
 
     @NotBlank(message = "Issue description is required")
     private String issueDescription;
 
-    private String serviceAdders;
-    @CreationTimestamp
-    @Column(nullable = false)
-    private LocalDateTime requestedAt;
+    private String serviceAddress;
+
+    @NotNull(message = "Scheduled date is required")
+    @Future(message = "Scheduled date must be in the future")
+    private LocalDateTime scheduledAt;
 }

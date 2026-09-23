@@ -21,14 +21,9 @@ public class Maintenance {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private Users user;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id")
-    private Products product;
 
     @Column(nullable = false)
     private String issueTitle;
@@ -36,15 +31,19 @@ public class Maintenance {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String issueDescription;
 
-    private String serviceAdders;
+    private String serviceAddress;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "status", length = 30)
     private MaintenanceStatus status;
+
+    private Boolean isCustomer;
 
     @CreationTimestamp
     @Column(nullable = false)
     private LocalDateTime requestedAt;
+
+    private LocalDateTime scheduledAt;
 
     private LocalDateTime resolvedAt;
 }

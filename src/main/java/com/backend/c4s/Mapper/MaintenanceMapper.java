@@ -18,14 +18,18 @@ public class MaintenanceMapper {
             fullName=(first+" "+last).trim();
         }
         return MaintenanceResponse.builder()
-                .userId(maintenance.getUser() !=null ? maintenance.getUser().getId(): null)
+                .id(maintenance.getId())
+                .userId(maintenance.getUser() != null ? maintenance.getUser().getId() : null)
                 .userName(fullName)
-                .userEmail(maintenance.getUser() != null ? maintenance.getUser().getEmail():null)
-                .productId(maintenance.getProduct()!=null ? maintenance.getProduct().getId(): null)
+                .userEmail(maintenance.getUser() != null ? maintenance.getUser().getEmail() : null)
                 .issueTitle(maintenance.getIssueTitle())
                 .issueDescription(maintenance.getIssueDescription())
-                .serviceAdders(maintenance.getServiceAdders())
+                .serviceAddress(maintenance.getServiceAddress())
+                .status(maintenance.getStatus())
+                .isCustomer(maintenance.getIsCustomer())
                 .requestedAt(maintenance.getRequestedAt())
+                .scheduledAt(maintenance.getScheduledAt())
+                .resolvedAt(maintenance.getResolvedAt())
                 .build();
     }
 }

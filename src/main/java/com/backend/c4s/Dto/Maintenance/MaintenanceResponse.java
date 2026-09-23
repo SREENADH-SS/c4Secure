@@ -19,9 +19,12 @@ public class MaintenanceResponse {
     private Long userId;
     private String userName;
     private String userEmail;
-    private Long productId;
     private String issueTitle;
     private String issueDescription;
-    private String serviceAdders;
+    private String serviceAddress;
+    private MaintenanceStatus status;
+    private Boolean isCustomer;
     private LocalDateTime requestedAt;
+    private LocalDateTime scheduledAt;
+    private LocalDateTime resolvedAt;
 }
