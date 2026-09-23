@@ -30,7 +30,7 @@ public class ContactMapper {
                 .email(contactResponse.getEmail())
                 .subject(contactResponse.getSubject())
                 .message(contactResponse.getMessage())
-                .resolved(contactResponse.getResolved())
+                .isResolved(contactResponse.getIsResolved())
                 .createdAt(contactResponse.getCreatedAt())
                 .build();
     }

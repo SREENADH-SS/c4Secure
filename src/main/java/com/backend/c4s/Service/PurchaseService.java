@@ -1,5 +1,6 @@
 package com.backend.c4s.Service;
 
+import com.backend.c4s.Dto.Purchase.PackagePurchaseRequest;
 import com.backend.c4s.Dto.Purchase.PurchaseAdminResponse;
 import com.backend.c4s.Dto.Purchase.PurchaseUserResponse;
 import com.backend.c4s.Dto.PurchaseItem.PurchaseItemRequest;
@@ -11,7 +12,11 @@ public interface PurchaseService {
 
     PurchaseUserResponse createPurchase(Long userId, String shippingAddress, List<PurchaseItemRequest>items, boolean requiresInstallation);
 
-    PurchaseUserResponse getPurchaseByIdForUUser(String purchaseId, Long userId);
+    PurchaseUserResponse createPurchaseFromCart(Long userId, String shippingAddress, boolean requiresInstallation);
+
+    public PurchaseUserResponse createPackagePurchase(Long userId, PackagePurchaseRequest request);
+
+    PurchaseUserResponse getPurchaseByIdForUser(String purchaseId, Long userId);
 
     List<PurchaseUserResponse> getUserPurchases(Long userId);
 

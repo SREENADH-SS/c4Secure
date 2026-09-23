@@ -18,6 +18,6 @@ public class ContactResponse {
     private String email;
     private String subject;
     private String message;
-    private Boolean resolved;
+    private Boolean isResolved;
     private LocalDateTime createdAt;
 }

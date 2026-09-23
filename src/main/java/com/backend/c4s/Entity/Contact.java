@@ -32,7 +32,7 @@ public class Contact {
     private String message;
 
     @Builder.Default
-    private Boolean resolved=false;
+    private Boolean isResolved=false;
 
     @CreationTimestamp
     @Column(nullable = false)

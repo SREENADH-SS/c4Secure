@@ -62,20 +62,24 @@ public class SecurityConfig {
                         // 2. Allow auth & documentation endpoints
                         .requestMatchers(PUBLIC_URLS).permitAll()
 
-                        // 3. Allow public GET read-only access to products, categories, and brands
+                        // 3. Allow public POST & GET requests for contact submissions
+                        .requestMatchers(HttpMethod.POST, "/api/v1/contacts").permitAll()
+
+                        // 4. Allow public GET read-only access to products, categories, packages, and brands
                         .requestMatchers(HttpMethod.GET,
                                 "/api/v1/products/**",
                                 "/api/v1/categories/**",
                                 "/api/v1/brands/**",
-                                "/api/v1/product-images/**"
+                                "/api/v1/product-images/**",
+                                "/api/v1/packages/**"
                         ).permitAll()
 
-                        // 4. Role-restricted routes
+                        // 5. Role-restricted routes
                         .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/v1/users/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/api/v1/cart/**").hasAnyRole("USER", "ADMIN")
 
-                        // 5. Secure remaining endpoints
+                        // 6. Secure remaining endpoints
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider)
